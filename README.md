@@ -1,0 +1,2 @@
+# SuperShop
+Projeto Mariana - SuperShop
