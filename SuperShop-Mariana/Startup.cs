@@ -31,6 +31,9 @@ namespace SuperShop_Mariana
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")); //Buscar a connection string
             }
             );
+            services.AddTransient<SeedDB>(); //configurar a injeção de dependencias. Usa deita fora e não é mais usado
+            //AddSingleton: Nunca vai ser destruido. ocupa muita memória
+            //AddScope: Fica criado e instanciado. Quando criamos novo, ele apaga e sobrepõe. 
             services.AddControllersWithViews();
         }
 
