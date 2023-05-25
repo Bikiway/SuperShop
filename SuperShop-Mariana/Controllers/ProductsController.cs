@@ -143,7 +143,7 @@ namespace SuperShop_Mariana.Controllers
             {
                 return Problem("Entity set 'DataContext.products'  is null.");
             }
-            var products = await _context.products.FindAsync(id);
+            var products = await _context.products.FindAsync(id); 
             if (products != null)
             {
                 _context.products.Remove(products);
