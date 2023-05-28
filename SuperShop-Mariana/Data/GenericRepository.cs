@@ -14,10 +14,6 @@ namespace SuperShop_Mariana.Data
         {
             _context = context; //Nosso construtor
         }
-        Task IGenericRepository<T>.CreateAsync(T entity)
-        {
-            throw new System.NotImplementedException();
-        }
 
        public IQueryable<T> GetAll()
         {

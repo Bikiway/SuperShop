@@ -22,7 +22,7 @@ namespace SuperShop_Mariana.Controllers
         // GET: Products
         public IActionResult Index()
         {
-              return View(_repository.GetAll());
+              return View(_repository.GetAll().OrderBy(e => e.Name));
         }
 
         // GET: Products/Details/5
