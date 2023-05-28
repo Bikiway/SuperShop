@@ -4,9 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SuperShop_Mariana.Data.Entities
 {
-    public class Products
+    public class Products : IEntenty
     {
+        
         public int Id { get; set; }
+
+
 
         [Required] //Obrigatório preencher
         [MaxLength(50, ErrorMessage ="The field {0} can contain {1} characters length.")] //Máximo 50 caracteres(BD) e mensagem de erro(view).

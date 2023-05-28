@@ -34,7 +34,9 @@ namespace SuperShop_Mariana
             services.AddTransient<SeedDB>(); //configurar a injeção de dependencias. Usa deita fora e não é mais usado
             //AddSingleton: Nunca vai ser destruido. ocupa muita memória
             //AddScope: Fica criado e instanciado. Quando criamos novo, ele apaga e sobrepõe. 
-            services.AddScoped<IRepository, Repository>(); 
+            
+            services.AddScoped<IProductsRepository, ProductRepository>(); //Class por herança. Class Abstrata
+            //services.AddScoped<IRepository, Repository>(); 
             services.AddControllersWithViews();
         }
 

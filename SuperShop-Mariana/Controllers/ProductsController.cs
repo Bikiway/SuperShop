@@ -12,9 +12,9 @@ namespace SuperShop_Mariana.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly IRepository _repository;
+        private readonly IProductsRepository _repository;
 
-        public ProductsController(IRepository repository)
+        public ProductsController(IProductsRepository repository)
         {
             this._repository = repository;
         }
@@ -22,11 +22,11 @@ namespace SuperShop_Mariana.Controllers
         // GET: Products
         public IActionResult Index()
         {
-              return View(_repository.GetProducts());
+              return View(_repository.GetAll());
         }
 
         // GET: Products/Details/5
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -34,7 +34,7 @@ namespace SuperShop_Mariana.Controllers
             }
 
             //Quando tiver valor nulo, passa a um valor dele próprio e não rebenta.
-            var products = _repository.GetProduct(id.Value);
+            var products = await _repository.GetByIdAsync(id.Value);
             if (products == null)
             {
                 return NotFound();
@@ -58,22 +58,22 @@ namespace SuperShop_Mariana.Controllers
         {
             if (ModelState.IsValid)
             {
-                _repository.AddProduct(products);
-                await _repository.SaveAll();
+                await _repository.CreateAsync(products);
+                //Não é preciso gravar, pois já grvaou no repositório. Redundancia...
                 return RedirectToAction(nameof(Index));
             }
             return View(products);
         }
 
         // GET: Products/Edit/5
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var products = _repository.GetProduct(id.Value);
+            var products = await _repository.GetByIdAsync(id.Value);
             if (products == null)
             {
                 return NotFound();
@@ -97,12 +97,12 @@ namespace SuperShop_Mariana.Controllers
             {
                 try
                 {
-                    _repository.UpdateProduct(products);
-                    await _repository.SaveAll();
+                    await _repository.UpdateAsync(products);
+                    //await _repository.SaveAll();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (_repository.ProductExists(products.Id))
+                    if (! await _repository.ExistAsync(products.Id))
                     {
                         return NotFound();
                     }
@@ -117,14 +117,14 @@ namespace SuperShop_Mariana.Controllers
         }
 
         // GET: Products/Delete/5
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var products = _repository.GetProduct(id.Value);
+            var products = await _repository.GetByIdAsync(id.Value);
             if (products == null)
             {
                 return NotFound();
@@ -142,13 +142,13 @@ namespace SuperShop_Mariana.Controllers
             {
                 return Problem("Entity set 'DataContext.products'  is null.");
             }
-            var products = _repository.GetProduct(id);
+            var products = await _repository.GetByIdAsync(id);
             if (products != null)
             {
-                _repository.RemoveProduct(products);
+                await _repository.DeleteAsync(products);
             }
             
-            await _repository.SaveAll();
+            //await _repository.SaveAll();
             return RedirectToAction(nameof(Index));
         }
     }
