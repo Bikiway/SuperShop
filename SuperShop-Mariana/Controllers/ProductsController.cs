@@ -12,29 +12,29 @@ namespace SuperShop_Mariana.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly DataContext _context;
+        private readonly IRepository _repository;
 
-        public ProductsController(DataContext context)
+        public ProductsController(IRepository repository)
         {
-            _context = context;
+            this._repository = repository;
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-              return View(await _context.products.ToListAsync());
+              return View(_repository.GetProducts());
         }
 
         // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
-            if (id == null || _context.products == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var products = await _context.products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            //Quando tiver valor nulo, passa a um valor dele próprio e não rebenta.
+            var products = _repository.GetProduct(id.Value);
             if (products == null)
             {
                 return NotFound();
@@ -58,22 +58,22 @@ namespace SuperShop_Mariana.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(products);
-                await _context.SaveChangesAsync();
+                _repository.AddProduct(products);
+                await _repository.SaveAll();
                 return RedirectToAction(nameof(Index));
             }
             return View(products);
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
-            if (id == null || _context.products == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var products = await _context.products.FindAsync(id);
+            var products = _repository.GetProduct(id.Value);
             if (products == null)
             {
                 return NotFound();
@@ -97,12 +97,12 @@ namespace SuperShop_Mariana.Controllers
             {
                 try
                 {
-                    _context.Update(products);
-                    await _context.SaveChangesAsync();
+                    _repository.UpdateProduct(products);
+                    await _repository.SaveAll();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductsExists(products.Id))
+                    if (_repository.ProductExists(products.Id))
                     {
                         return NotFound();
                     }
@@ -117,15 +117,14 @@ namespace SuperShop_Mariana.Controllers
         }
 
         // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
-            if (id == null || _context.products == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var products = await _context.products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var products = _repository.GetProduct(id.Value);
             if (products == null)
             {
                 return NotFound();
@@ -139,23 +138,18 @@ namespace SuperShop_Mariana.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.products == null)
+            if (_repository == null)
             {
                 return Problem("Entity set 'DataContext.products'  is null.");
             }
-            var products = await _context.products.FindAsync(id);
+            var products = _repository.GetProduct(id);
             if (products != null)
             {
-                _context.products.Remove(products);
+                _repository.RemoveProduct(products);
             }
             
-            await _context.SaveChangesAsync();
+            await _repository.SaveAll();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProductsExists(int id)
-        {
-          return _context.products.Any(e => e.Id == id);
         }
     }
 }
