@@ -7,16 +7,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SuperShop_Mariana.Data;
 using SuperShop_Mariana.Data.Entities;
+using SuperShop_Mariana.Helpers;
 
 namespace SuperShop_Mariana.Controllers
 {
     public class ProductsController : Controller
     {
         private readonly IProductsRepository _repository;
-
-        public ProductsController(IProductsRepository repository)
+        private readonly IUserHelper _userHelper;
+        public ProductsController(IProductsRepository repository, IUserHelper userHelper)
         {
             this._repository = repository;
+            _userHelper = userHelper;
         }
 
         // GET: Products
@@ -54,10 +56,12 @@ namespace SuperShop_Mariana.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvaiable,Stock")] Products products)
+        public async Task<IActionResult> Create(Products products)
         {
             if (ModelState.IsValid)
             {
+                //Logar o produto
+                products.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
                 await _repository.CreateAsync(products);
                 //Não é preciso gravar, pois já grvaou no repositório. Redundancia...
                 return RedirectToAction(nameof(Index));
@@ -86,7 +90,7 @@ namespace SuperShop_Mariana.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,ImageUrl,LastPurchase,LastSale,IsAvaiable,Stock")] Products products)
+        public async Task<IActionResult> Edit(int id, Products products)
         {
             if (id != products.Id)
             {
@@ -97,6 +101,7 @@ namespace SuperShop_Mariana.Controllers
             {
                 try
                 {
+                    products.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
                     await _repository.UpdateAsync(products);
                     //await _repository.SaveAll();
                 }

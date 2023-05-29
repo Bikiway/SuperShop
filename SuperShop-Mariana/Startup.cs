@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SuperShop_Mariana.Data;
+using SuperShop_Mariana.Data.Entities;
+using SuperShop_Mariana.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +28,21 @@ namespace SuperShop_Mariana
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentity<User, IdentityRole>( cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true; //Emails unicos
+
+                //Password sem caracteres especiais e etc
+                cfg.Password.RequireDigit = false; 
+                cfg.Password.RequireUppercase = false;
+                cfg.Password.RequiredUniqueChars = 0;
+                cfg.Password.RequireLowercase = false;
+                cfg.Password.RequiredLength = 6;
+                cfg.Password.RequireNonAlphanumeric = false;
+            })
+                .AddEntityFrameworkStores<DataContext>();
+            
+
             services.AddDbContext<DataContext>(cfg =>  
             {
                 //Tipo de bases dados queremos instalar
@@ -34,6 +52,8 @@ namespace SuperShop_Mariana
             services.AddTransient<SeedDB>(); //configurar a injeção de dependencias. Usa deita fora e não é mais usado
             //AddSingleton: Nunca vai ser destruido. ocupa muita memória
             //AddScope: Fica criado e instanciado. Quando criamos novo, ele apaga e sobrepõe. 
+
+            services.AddScoped<IUserHelper, UserHelper>();
             
             services.AddScoped<IProductsRepository, ProductRepository>(); //Class por herança. Class Abstrata
             //services.AddScoped<IRepository, Repository>(); 
@@ -57,6 +77,8 @@ namespace SuperShop_Mariana
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication(); //MiddleWare
 
             app.UseAuthorization();
 
