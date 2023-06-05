@@ -17,7 +17,7 @@ namespace SuperShop_Mariana.Controllers.API
         [HttpGet]
         public IActionResult GetProducts() 
         {
-            return Ok(_productsRepository.GetAll()); //Agarra tudo e embrulha no Json.
+            return Ok(_productsRepository.GetAllWithUsers()); //Agarra tudo e embrulha no Json.
         }
 
     }

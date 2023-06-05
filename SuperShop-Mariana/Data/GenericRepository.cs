@@ -15,7 +15,7 @@ namespace SuperShop_Mariana.Data
             _context = context; //Nosso construtor
         }
 
-       public IQueryable<T> GetAll()
+       public IQueryable<T> GetAllWithUser()
         {
             return _context.Set<T>().AsNoTracking(); 
             //Vai à tabela T e vai buscar os tudo o que tiver que ir buscar e desliga da tabela.

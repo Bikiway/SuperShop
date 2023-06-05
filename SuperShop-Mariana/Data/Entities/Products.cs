@@ -39,5 +39,17 @@ namespace SuperShop_Mariana.Data.Entities
 
         public User user { get; set; } //user do produto.Relação de um para muitos.
 
+        public string ImageFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ImageUrl))
+                {
+                    return null;
+                }
+                return $"https://localhost:44325{ImageUrl.Substring(1)}";
+            }
+        }
+
     }
 }

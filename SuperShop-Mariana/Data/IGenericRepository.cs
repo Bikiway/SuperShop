@@ -5,7 +5,7 @@ namespace SuperShop_Mariana.Data
 {
     public interface IGenericRepository<T> where T : class
     {
-        IQueryable<T> GetAll(); //Método que devolve todas as entidades que usarmos o T.
+        IQueryable<T> GetAllWithUser(); //Método que devolve todas as entidades que usarmos o T.
 
         Task<T> GetByIdAsync(int id); //Unica coisa em comum. 
 

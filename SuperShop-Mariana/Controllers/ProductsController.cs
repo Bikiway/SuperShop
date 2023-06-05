@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using SuperShop_Mariana.Data;
 using SuperShop_Mariana.Data.Entities;
 using SuperShop_Mariana.Helpers;
+using SuperShop_Mariana.Models;
 
 namespace SuperShop_Mariana.Controllers
 {
@@ -17,14 +19,14 @@ namespace SuperShop_Mariana.Controllers
         private readonly IUserHelper _userHelper;
         public ProductsController(IProductsRepository repository, IUserHelper userHelper)
         {
-            this._repository = repository;
+            _repository = repository;
             _userHelper = userHelper;
         }
 
         // GET: Products
         public IActionResult Index()
         {
-              return View(_repository.GetAll().OrderBy(e => e.Name));
+              return View(_repository.GetAllWithUser().OrderBy(e => e.Name));
         }
 
         // GET: Products/Details/5
@@ -56,17 +58,53 @@ namespace SuperShop_Mariana.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Products products)
+        public async Task<IActionResult> Create(ProductViewModel model)
         {
             if (ModelState.IsValid)
             {
+                var path = string.Empty;
+
+                if(model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    var guid = Guid.NewGuid().ToString(); //Gera uma chave aleatória
+                    var file = $"{guid}.jpg";
+
+                    path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\products",
+                        file);
+
+                    using(var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await model.ImageFile.CopyToAsync(stream);
+                    }
+                    path = $"~/images/products/{file}"; //Gravar na tabela ImageURL.
+                }
+
+                var products = this.ToProducts(model,path);
                 //Logar o produto
                 products.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
                 await _repository.CreateAsync(products);
-                //Não é preciso gravar, pois já grvaou no repositório. Redundancia...
+                //Não é preciso gravar, pois já gravou no repositório. Redundancia...
                 return RedirectToAction(nameof(Index));
             }
-            return View(products);
+            return View(model);
+        }
+
+        private Products ToProducts(ProductViewModel model, string path)
+        {
+            return new Products
+            {
+                Id = model.Id,
+                Name = model.Name,
+                ImageUrl = path,
+                IsAvaiable = model.IsAvaiable,
+                LastPurchase = model.LastPurchase,
+                LastSale = model.LastSale,
+                Price = model.Price,
+                Stock = model.Stock,
+                user = model.user,
+            };
         }
 
         // GET: Products/Edit/5
@@ -82,7 +120,25 @@ namespace SuperShop_Mariana.Controllers
             {
                 return NotFound();
             }
-            return View(products);
+
+            var model = this.ToProductViewModel(products);
+            return View(model);
+        }
+
+        private object ToProductViewModel(Products products)
+        {
+            return new ProductViewModel
+            {
+                Id = products.Id,
+                Name = products.Name,
+                IsAvaiable = products.IsAvaiable,
+                LastPurchase = products.LastPurchase,
+                LastSale = products.LastSale,
+                Price = products.Price,
+                Stock = products.Stock,
+                user = products.user,
+                ImageUrl = products.ImageUrl,
+            };
         }
 
         // POST: Products/Edit/5
@@ -90,24 +146,37 @@ namespace SuperShop_Mariana.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Products products)
+        public async Task<IActionResult> Edit(ProductViewModel model)
         {
-            if (id != products.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    products.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
-                    await _repository.UpdateAsync(products);
+                    var path = model.ImageUrl; //para o caso de não alterar a imagem.
+
+                    if(model.ImageFile != null && model.ImageFile.Length > 0) 
+                    {
+                        var guid = Guid.NewGuid().ToString(); //Gera uma chave aleatória
+                        var file = $"{guid}.jpg";
+
+                        path = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot\\images\\products",
+                            file);
+                        using(var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await model.ImageFile.CopyToAsync(stream);
+                        }
+                        path = $"~/images/products/{file}";
+                    }
+                    var product = this.ToProducts(model, path);
+                    product.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
+                    await _repository.UpdateAsync(product);
                     //await _repository.SaveAll();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (! await _repository.ExistAsync(products.Id))
+                    if (! await _repository.ExistAsync(model.Id))
                     {
                         return NotFound();
                     }
@@ -118,7 +187,7 @@ namespace SuperShop_Mariana.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(products);
+            return View(model);
         }
 
         // GET: Products/Delete/5
