@@ -54,6 +54,10 @@ namespace SuperShop_Mariana
             //AddScope: Fica criado e instanciado. Quando criamos novo, ele apaga e sobrepõe. 
 
             services.AddScoped<IUserHelper, UserHelper>();
+
+            services.AddScoped<IImageHelper, ImageHelper>();
+
+            services.AddScoped<IConverterHelper, ConverterHelper>();
             
             services.AddScoped<IProductsRepository, ProductRepository>(); //Class por herança. Class Abstrata
             //services.AddScoped<IRepository, Repository>(); 

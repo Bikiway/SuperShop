@@ -17,10 +17,14 @@ namespace SuperShop_Mariana.Controllers
     {
         private readonly IProductsRepository _repository;
         private readonly IUserHelper _userHelper;
-        public ProductsController(IProductsRepository repository, IUserHelper userHelper)
+        private readonly IImageHelper _imageHelper;
+        private readonly IConverterHelper _converterHelper;
+        public ProductsController(IProductsRepository repository, IUserHelper userHelper, IImageHelper imageHelper, IConverterHelper converterHelper)
         {
             _repository = repository;
             _userHelper = userHelper;
+            _imageHelper = imageHelper;
+            _converterHelper = converterHelper;
         }
 
         // GET: Products
@@ -66,22 +70,11 @@ namespace SuperShop_Mariana.Controllers
 
                 if(model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    var guid = Guid.NewGuid().ToString(); //Gera uma chave aleatória
-                    var file = $"{guid}.jpg";
-
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\products",
-                        file);
-
-                    using(var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await model.ImageFile.CopyToAsync(stream);
-                    }
-                    path = $"~/images/products/{file}"; //Gravar na tabela ImageURL.
+                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
                 }
 
-                var products = this.ToProducts(model,path);
+                 //products = this.ToProducts(model,path);
+               var products = _converterHelper.ToProducts(model, path, true);
                 //Logar o produto
                 products.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
                 await _repository.CreateAsync(products);
@@ -91,21 +84,21 @@ namespace SuperShop_Mariana.Controllers
             return View(model);
         }
 
-        private Products ToProducts(ProductViewModel model, string path)
-        {
-            return new Products
-            {
-                Id = model.Id,
-                Name = model.Name,
-                ImageUrl = path,
-                IsAvaiable = model.IsAvaiable,
-                LastPurchase = model.LastPurchase,
-                LastSale = model.LastSale,
-                Price = model.Price,
-                Stock = model.Stock,
-                user = model.user,
-            };
-        }
+        //private Products ToProducts(ProductViewModel model, string path)
+        //{
+        //    return new Products
+        //    {
+        //        Id = model.Id,
+        //        Name = model.Name,
+        //        ImageUrl = path,
+        //        IsAvaiable = model.IsAvaiable,
+        //        LastPurchase = model.LastPurchase,
+        //        LastSale = model.LastSale,
+        //        Price = model.Price,
+        //        Stock = model.Stock,
+        //        user = model.user,
+        //    };
+        //}
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -121,25 +114,25 @@ namespace SuperShop_Mariana.Controllers
                 return NotFound();
             }
 
-            var model = this.ToProductViewModel(products);
+            var model = _converterHelper.ToProductViewModel(products);
             return View(model);
         }
 
-        private object ToProductViewModel(Products products)
-        {
-            return new ProductViewModel
-            {
-                Id = products.Id,
-                Name = products.Name,
-                IsAvaiable = products.IsAvaiable,
-                LastPurchase = products.LastPurchase,
-                LastSale = products.LastSale,
-                Price = products.Price,
-                Stock = products.Stock,
-                user = products.user,
-                ImageUrl = products.ImageUrl,
-            };
-        }
+        //private object ToProductViewModel(Products products)
+        //{
+        //    return new ProductViewModel
+        //    {
+        //        Id = products.Id,
+        //        Name = products.Name,
+        //        IsAvaiable = products.IsAvaiable,
+        //        LastPurchase = products.LastPurchase,
+        //        LastSale = products.LastSale,
+        //        Price = products.Price,
+        //        Stock = products.Stock,
+        //        user = products.user,
+        //        ImageUrl = products.ImageUrl,
+        //    };
+        //}
 
         // POST: Products/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -156,20 +149,11 @@ namespace SuperShop_Mariana.Controllers
 
                     if(model.ImageFile != null && model.ImageFile.Length > 0) 
                     {
-                        var guid = Guid.NewGuid().ToString(); //Gera uma chave aleatória
-                        var file = $"{guid}.jpg";
-
-                        path = Path.Combine(
-                            Directory.GetCurrentDirectory(),
-                            "wwwroot\\images\\products",
-                            file);
-                        using(var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await model.ImageFile.CopyToAsync(stream);
-                        }
-                        path = $"~/images/products/{file}";
+                        path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
                     }
-                    var product = this.ToProducts(model, path);
+                    //var product = this.ToProducts(model, path);
+                    var product = _converterHelper.ToProducts(model, path, false);
+
                     product.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
                     await _repository.UpdateAsync(product);
                     //await _repository.SaveAll();
