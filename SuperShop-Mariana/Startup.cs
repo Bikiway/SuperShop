@@ -13,6 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Azure;
+using Azure.Storage.Queues;
+using Azure.Storage.Blobs;
+using Azure.Core.Extensions;
 
 namespace SuperShop_Mariana
 {
@@ -55,7 +59,7 @@ namespace SuperShop_Mariana
 
             services.AddScoped<IUserHelper, UserHelper>();
 
-            services.AddScoped<IImageHelper, ImageHelper>();
+            services.AddScoped<IBlobHelper, BlobHelper>(); //Entra o blob e sai o Iimage.
 
             services.AddScoped<IConverterHelper, ConverterHelper>();
             

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SuperShop_Mariana.Data;
-using SuperShop_Mariana.Data.Entities;
 using SuperShop_Mariana.Helpers;
 using SuperShop_Mariana.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SuperShop_Mariana.Controllers
 {
@@ -17,20 +13,20 @@ namespace SuperShop_Mariana.Controllers
     {
         private readonly IProductsRepository _repository;
         private readonly IUserHelper _userHelper;
-        private readonly IImageHelper _imageHelper;
+        private readonly IBlobHelper _blobHelper;
         private readonly IConverterHelper _converterHelper;
-        public ProductsController(IProductsRepository repository, IUserHelper userHelper, IImageHelper imageHelper, IConverterHelper converterHelper)
+        public ProductsController(IProductsRepository repository, IUserHelper userHelper, IBlobHelper blobHelper, IConverterHelper converterHelper)
         {
             _repository = repository;
             _userHelper = userHelper;
-            _imageHelper = imageHelper;
+            _blobHelper = blobHelper;
             _converterHelper = converterHelper;
         }
 
         // GET: Products
         public IActionResult Index()
         {
-              return View(_repository.GetAllWithUser().OrderBy(e => e.Name));
+            return View(_repository.GetAllWithUser().OrderBy(e => e.Name));
         }
 
         // GET: Products/Details/5
@@ -66,15 +62,17 @@ namespace SuperShop_Mariana.Controllers
         {
             if (ModelState.IsValid)
             {
-                var path = string.Empty;
+                Guid imageId = Guid.Empty;
+                //var path = string.Empty;
 
-                if(model.ImageFile != null && model.ImageFile.Length > 0)
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
+                    //path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
+                    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
                 }
 
-                 //products = this.ToProducts(model,path);
-               var products = _converterHelper.ToProducts(model, path, true);
+                //products = this.ToProducts(model,path);
+                var products = _converterHelper.ToProducts(model, imageId, true);
                 //Logar o produto
                 products.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
                 await _repository.CreateAsync(products);
@@ -145,14 +143,16 @@ namespace SuperShop_Mariana.Controllers
             {
                 try
                 {
-                    var path = model.ImageUrl; //para o caso de não alterar a imagem.
+                    //var path = model.ImageFullPath; //para o caso de não alterar a imagem.
+                    Guid imageId = model.ImageId;
 
-                    if(model.ImageFile != null && model.ImageFile.Length > 0) 
+                    if (model.ImageFile != null && model.ImageFile.Length > 0) 
                     {
-                        path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
+                        //path = await _imageHelper.UploadImageAsync(model.ImageFile, "products");
+                        imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
                     }
                     //var product = this.ToProducts(model, path);
-                    var product = _converterHelper.ToProducts(model, path, false);
+                    var product = _converterHelper.ToProducts(model, imageId, false);
 
                     product.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
                     await _repository.UpdateAsync(product);
@@ -160,7 +160,7 @@ namespace SuperShop_Mariana.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (! await _repository.ExistAsync(model.Id))
+                    if (!await _repository.ExistAsync(model.Id))
                     {
                         return NotFound();
                     }
@@ -205,7 +205,7 @@ namespace SuperShop_Mariana.Controllers
             {
                 await _repository.DeleteAsync(products);
             }
-            
+
             //await _repository.SaveAll();
             return RedirectToAction(nameof(Index));
         }

@@ -1,5 +1,6 @@
 ﻿using SuperShop_Mariana.Data.Entities;
 using SuperShop_Mariana.Models;
+using System;
 using System.IO;
 using System.Xml.Linq;
 
@@ -7,13 +8,13 @@ namespace SuperShop_Mariana.Helpers
 {
     public class ConverterHelper : IConverterHelper
     {
-        public Products ToProducts(ProductViewModel model, string path, bool isNew)
+        public Products ToProducts(ProductViewModel model, Guid imageId, bool isNew)
         {
             return new Products
             {
                 Id = isNew? 0 : model.Id,
                 Name = model.Name,
-                ImageUrl = path,
+                ImageId = imageId,
                 IsAvaiable = model.IsAvaiable,
                 LastPurchase = model.LastPurchase,
                 LastSale = model.LastSale,
@@ -36,7 +37,7 @@ namespace SuperShop_Mariana.Helpers
                 Price = products.Price,
                 Stock = products.Stock,
                 user = products.user,
-                ImageUrl = products.ImageUrl,
+                ImageId = products.ImageId,
             };
         }
     }

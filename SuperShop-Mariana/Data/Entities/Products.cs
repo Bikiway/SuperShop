@@ -19,7 +19,7 @@ namespace SuperShop_Mariana.Data.Entities
         public decimal Price { get; set; }
 
         [Display(Name = "Image")] //Aparecer na página da web. Só image e não ImageUrl.
-        public string ImageUrl { get; set; }
+        public Guid ImageId { get; set; } 
 
         
         [Display(Name = "Last Purchase")]
@@ -39,17 +39,21 @@ namespace SuperShop_Mariana.Data.Entities
 
         public User user { get; set; } //user do produto.Relação de um para muitos.
 
-        public string ImageFullPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(ImageUrl))
-                {
-                    return null;
-                }
-                return $"https://localhost:44325{ImageUrl.Substring(1)}";
-            }
-        }
+        public string ImageFullPath => ImageId == Guid.Empty 
+            ? $"https://supershop-bikiway.azurewebsites.net/images/products/logotipo.png"
+            : $"https://supershope.blob.core.windows.net/products/{ImageId}";
+        
+            //get
+            //{
+            //    if (string.IsNullOrEmpty(ImageUrl))
+            //    {
+            //        return null;
+            //    }
+            //    return $"https://supershop-bikiway.azurewebsites.net{ImageUrl.Substring(1)}";
+            //}
+
+
+        
 
     }
 }
