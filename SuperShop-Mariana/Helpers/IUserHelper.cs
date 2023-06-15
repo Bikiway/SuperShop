@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SuperShop_Mariana.Data.Entities;
+using SuperShop_Mariana.Models;
 using System.Threading.Tasks;
 
 namespace SuperShop_Mariana.Helpers
@@ -8,7 +9,10 @@ namespace SuperShop_Mariana.Helpers
     {
         Task<User> GetUserByEmailAsync(string email);
 
-        Task<IdentityResult> AddUserAsync(User user); //Vai receber o user que quero criar e a password
-        Task<IdentityResult> AddUserAsync(User user, string password);
+        Task<IdentityResult> AddUserAsync(User user, string password);//Vai receber o user que quero criar e a password
+
+        Task<SignInResult> LoginAsync(LoginViewModel model);
+
+        Task LogOutAsync();
     }
 }

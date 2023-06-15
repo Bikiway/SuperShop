@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SuperShop_Mariana.Data;
 using SuperShop_Mariana.Helpers;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace SuperShop_Mariana.Controllers
 {
+    
     public class ProductsController : Controller
     {
         private readonly IProductsRepository _repository;
@@ -47,6 +49,7 @@ namespace SuperShop_Mariana.Controllers
             return View(products);
         }
 
+        [Authorize]
         // GET: Products/Create
         public IActionResult Create()
         {
@@ -99,6 +102,7 @@ namespace SuperShop_Mariana.Controllers
         //}
 
         // GET: Products/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)

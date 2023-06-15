@@ -36,10 +36,10 @@ namespace SuperShop_Mariana.Data
                     FirstName = "Mariana",
                     LastName = "Oliveira",
                     Email = "mariana.95@outlook.pt",
-                    UserName = "Bikiway",
+                    UserName = "mariana.95@outlook.pt",
                     PhoneNumber = "123456789",
                 };
-                var result = await _userHelper.AddUserAsync(user, "123456"); //Password sempre à parte para depois ser encriptada.
+                var result = await _userHelper.AddUserAsync(user, "1234567"); //Password sempre à parte para depois ser encriptada.
 
                 if(result != IdentityResult.Success)
                 {

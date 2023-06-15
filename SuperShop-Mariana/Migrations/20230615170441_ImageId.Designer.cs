@@ -10,7 +10,7 @@ using SuperShop_Mariana.Data;
 namespace SuperShop_Mariana.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230610125832_ImageId")]
+    [Migration("20230615170441_ImageId")]
     partial class ImageId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
