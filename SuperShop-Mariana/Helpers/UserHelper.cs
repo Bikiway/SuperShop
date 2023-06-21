@@ -38,5 +38,15 @@ namespace SuperShop_Mariana.Helpers
         {
             await _signInManager.SignOutAsync();
         }
+
+        public async Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword)
+        {
+            return await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+        }
+
+        public async Task<IdentityResult> UpdateUSerAsync(User user)
+        {
+            return await _userManager.UpdateAsync(user);
+        }
     }
 }

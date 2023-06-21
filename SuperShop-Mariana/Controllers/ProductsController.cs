@@ -77,7 +77,7 @@ namespace SuperShop_Mariana.Controllers
                 //products = this.ToProducts(model,path);
                 var products = _converterHelper.ToProducts(model, imageId, true);
                 //Logar o produto
-                products.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
+                products.user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                 await _repository.CreateAsync(products);
                 //Não é preciso gravar, pois já gravou no repositório. Redundancia...
                 return RedirectToAction(nameof(Index));
@@ -158,7 +158,7 @@ namespace SuperShop_Mariana.Controllers
                     //var product = this.ToProducts(model, path);
                     var product = _converterHelper.ToProducts(model, imageId, false);
 
-                    product.user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
+                    product.user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                     await _repository.UpdateAsync(product);
                     //await _repository.SaveAll();
                 }
@@ -179,6 +179,7 @@ namespace SuperShop_Mariana.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
