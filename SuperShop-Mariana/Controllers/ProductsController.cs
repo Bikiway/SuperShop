@@ -49,7 +49,7 @@ namespace SuperShop_Mariana.Controllers
             return View(products);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         // GET: Products/Create
         public IActionResult Create()
         {

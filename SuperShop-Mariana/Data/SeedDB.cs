@@ -28,6 +28,9 @@ namespace SuperShop_Mariana.Data
         {
             await _context.Database.EnsureCreatedAsync(); //vai criar a base de dados, se nao tiver criada, ela cria.
 
+            await _userHelper.CheckRoleAsync("Admin"); //Se existe esse role admin e customer.
+            await _userHelper.CheckRoleAsync("Customer");
+
             var user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
             if(user == null)
             {
@@ -45,7 +48,11 @@ namespace SuperShop_Mariana.Data
                 {
                     throw new InvalidOperationException("Could not create the user in Seeder");
                 }
+
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
             }
+
+            var isInRole = await _userHelper.IsUserInRoleAsync(user, "Admin"); //Se o user está no role que queremos, ou não.
 
             if(!_context.products.Any())
             {

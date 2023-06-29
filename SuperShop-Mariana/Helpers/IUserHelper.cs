@@ -18,5 +18,8 @@ namespace SuperShop_Mariana.Helpers
         Task<IdentityResult> UpdateUSerAsync(User user); //Update o user first name and last
 
         Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword); //Mudar a pass, compará-la com a antiga e substituir.
+        Task CheckRoleAsync(string roleName);
+        Task AddUserToRoleAsync(User user, string roleName);
+        Task<bool> IsUserInRoleAsync(User user, string roleName);
     }
 }

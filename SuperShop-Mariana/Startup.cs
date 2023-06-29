@@ -66,6 +66,12 @@ namespace SuperShop_Mariana
             services.AddScoped<IProductsRepository, ProductRepository>(); //Class por herança. Class Abstrata
             //services.AddScoped<IRepository, Repository>(); 
             services.AddControllersWithViews();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/NotAuthorized";
+                options.AccessDeniedPath = "/Account/NotAuthorized";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

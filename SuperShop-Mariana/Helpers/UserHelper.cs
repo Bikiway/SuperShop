@@ -9,10 +9,12 @@ namespace SuperShop_Mariana.Helpers
     {
         private readonly UserManager<User> _userManager; //Gestão dos utilizadores
         private readonly SignInManager<User> _signInManager; //Gestão de passwords e users.
-        public UserHelper(UserManager<User> userManager, SignInManager<User> signInManager)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public UserHelper(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         public async Task<IdentityResult> AddUserAsync(User user, string password) //Criar um utilizador novo
@@ -47,6 +49,29 @@ namespace SuperShop_Mariana.Helpers
         public async Task<IdentityResult> UpdateUSerAsync(User user)
         {
             return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task CheckRoleAsync(string roleName)
+        {
+            var roleExists = await _roleManager.RoleExistsAsync(roleName);
+
+            if (!roleExists)
+            {
+                await _roleManager.CreateAsync(new IdentityRole
+                {
+                    Name = roleName
+                });
+            }
+        }
+
+        public async Task AddUserToRoleAsync(User user, string roleName)
+        {
+            await _userManager.AddToRoleAsync(user, roleName);
+        }
+
+        public async Task<bool> IsUserInRoleAsync(User user, string roleName)
+        {
+            return await _userManager.IsInRoleAsync(user, roleName); 
         }
     }
 }
