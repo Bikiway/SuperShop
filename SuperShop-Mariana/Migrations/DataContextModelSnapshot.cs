@@ -150,6 +150,85 @@ namespace SuperShop_Mariana.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("SuperShop_Mariana.Data.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DeliveryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("userId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("SuperShop_Mariana.Data.Entities.OrderDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("productsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("productsId");
+
+                    b.ToTable("OrdersDetails");
+                });
+
+            modelBuilder.Entity("SuperShop_Mariana.Data.Entities.OrderDetailTmp", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("productsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("userId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("productsId");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("OrderDetailTemps");
+                });
+
             modelBuilder.Entity("SuperShop_Mariana.Data.Entities.Products", b =>
                 {
                     b.Property<int>("Id")
@@ -312,6 +391,43 @@ namespace SuperShop_Mariana.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SuperShop_Mariana.Data.Entities.Order", b =>
+                {
+                    b.HasOne("SuperShop_Mariana.Data.Entities.User", "user")
+                        .WithMany()
+                        .HasForeignKey("userId");
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("SuperShop_Mariana.Data.Entities.OrderDetail", b =>
+                {
+                    b.HasOne("SuperShop_Mariana.Data.Entities.Order", null)
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId");
+
+                    b.HasOne("SuperShop_Mariana.Data.Entities.Products", "products")
+                        .WithMany()
+                        .HasForeignKey("productsId");
+
+                    b.Navigation("products");
+                });
+
+            modelBuilder.Entity("SuperShop_Mariana.Data.Entities.OrderDetailTmp", b =>
+                {
+                    b.HasOne("SuperShop_Mariana.Data.Entities.Products", "products")
+                        .WithMany()
+                        .HasForeignKey("productsId");
+
+                    b.HasOne("SuperShop_Mariana.Data.Entities.User", "user")
+                        .WithMany()
+                        .HasForeignKey("userId");
+
+                    b.Navigation("products");
+
+                    b.Navigation("user");
+                });
+
             modelBuilder.Entity("SuperShop_Mariana.Data.Entities.Products", b =>
                 {
                     b.HasOne("SuperShop_Mariana.Data.Entities.User", "user")
@@ -319,6 +435,11 @@ namespace SuperShop_Mariana.Migrations
                         .HasForeignKey("userId");
 
                     b.Navigation("user");
+                });
+
+            modelBuilder.Entity("SuperShop_Mariana.Data.Entities.Order", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

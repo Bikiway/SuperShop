@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SuperShop_Mariana.Data.Entities;
 using SuperShop_Mariana.Helpers;
 using System;
@@ -26,7 +27,7 @@ namespace SuperShop_Mariana.Data
 
         public async Task SeedAsync()
         {
-            await _context.Database.EnsureCreatedAsync(); //vai criar a base de dados, se nao tiver criada, ela cria.
+            await _context.Database.MigrateAsync(); //vai criar a base de dados, se nao tiver criada, ela cria.
 
             await _userHelper.CheckRoleAsync("Admin"); //Se existe esse role admin e customer.
             await _userHelper.CheckRoleAsync("Customer");

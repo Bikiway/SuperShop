@@ -1,17 +1,14 @@
 {
   "dependencies": {
-    "secrets1": {
-      "type": "secrets"
+    "storage1": {
+      "ignored": "true",
+      "type": "storage",
+      "connectionId": "Blob:ConnectionString"
     },
     "mssql1": {
+      "ignored": "true",
       "type": "mssql",
-      "connectionId": "ConnectionStrings:DefaultConnection",
-      "dynamicId": null
-    },
-    "storage1": {
-      "type": "storage",
-      "connectionId": "Blob:ConnectionString",
-      "dynamicId": null
+      "connectionId": "ConnectionStrings:DefaultConnection"
     }
   }
 }

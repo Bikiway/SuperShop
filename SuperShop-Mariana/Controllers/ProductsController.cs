@@ -36,14 +36,14 @@ namespace SuperShop_Mariana.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             //Quando tiver valor nulo, passa a um valor dele próprio e não rebenta.
             var products = await _repository.GetByIdAsync(id.Value);
             if (products == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             return View(products);
@@ -107,13 +107,13 @@ namespace SuperShop_Mariana.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             var products = await _repository.GetByIdAsync(id.Value);
             if (products == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             var model = _converterHelper.ToProductViewModel(products);
@@ -166,7 +166,7 @@ namespace SuperShop_Mariana.Controllers
                 {
                     if (!await _repository.ExistAsync(model.Id))
                     {
-                        return NotFound();
+                        return new NotFoundViewResult("ProductNotFound");
                     }
                     else
                     {
@@ -184,13 +184,13 @@ namespace SuperShop_Mariana.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             var products = await _repository.GetByIdAsync(id.Value);
             if (products == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ProductNotFound");
             }
 
             return View(products);
@@ -213,6 +213,11 @@ namespace SuperShop_Mariana.Controllers
 
             //await _repository.SaveAll();
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult ProductNotFound()
+        {
+            return View(); //Genérico e dá mensagens de erro gerais para todos.
         }
     }
 }
