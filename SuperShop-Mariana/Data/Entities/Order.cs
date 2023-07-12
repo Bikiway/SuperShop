@@ -33,7 +33,7 @@ namespace SuperShop_Mariana.Data.Entities
         public double Quantity => Items == null ? 0 : Items.Sum(i => i.Quantity); //Caso items == null, somamos. Caso null mete 0.
 
 
-        [DisplayFormat(DataFormatString = "{0:N2}")]
+        [DisplayFormat(DataFormatString = "{0:C2}")]
         public decimal Value => Items == null ? 0 : Items.Sum(i => i.Value);
     }
 }

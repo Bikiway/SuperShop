@@ -22,7 +22,7 @@ namespace SuperShop_Mariana.Data.Entities
         public double Quantity { get; set; }
 
 
-        public decimal Valor => Price * (decimal)Quantity;
+        public decimal Value => Price * (decimal)Quantity;
     }
 
 }

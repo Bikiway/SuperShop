@@ -54,8 +54,13 @@ namespace SuperShop_Mariana.Data
             }
 
             var isInRole = await _userHelper.IsUserInRoleAsync(user, "Admin"); //Se o user está no role que queremos, ou não.
+            if (!isInRole)
+            {
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
+            }
 
-            if(!_context.products.Any())
+
+            if (!_context.products.Any())
             {
                AddProduct("Iphone X" ,user);
                 AddProduct("Magic Mickey Mouse", user);

@@ -1,0 +1,64 @@
+﻿@model IEnumerable<SuperShop_Mariana.Data.Entities.OrderDetailTmp>
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Order</h1>
+
+<p>
+    <a asp-action="AddProduct" class="btn btn-success">Add Product</a>
+    <a asp-action="ConfirmOrder" class="btn btn-primary">Confirm Order</a>
+</p>
+<table class="table">
+
+    <thead>
+
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model=>model.products.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model=>model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model=>model.Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model=>model.Value)
+            </th>
+
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach(var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelitem=>item.products.Name)
+                </td>
+                 <td>
+                    @Html.DisplayFor(modelitem=>item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelitem=>item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelitem=>item.Value)
+                </td>
+
+                <td>
+                    <a asp-action="Increase" asp-route.id="@item.Id" class="btn btn-warning">+</a>
+                    <a asp-action="Decrease" asp-route.id="@item.Id" class="btn btn-info">-</a>
+                    <a asp-action="DeleteItem" asp-route.id="@item.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+

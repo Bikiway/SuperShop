@@ -1,0 +1,21 @@
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace SuperShop_Mariana.Models
+{
+    public class AddItemViewModel
+    {
+        //Só para a view
+        [Display(Name ="Product")]
+        [Range(1, int.MaxValue, ErrorMessage="You must select a product")]
+        public int ProductId { get; set; }
+
+
+        [Range(0.0001, double.MaxValue, ErrorMessage ="The quantity must be a positive number")]
+        public double Quantity { get; set; }
+
+        public IEnumerable<SelectListItem> Products { get; set; }  //Faz logo a comboBox: cria logo uma lista de produtos
+    }
+}
