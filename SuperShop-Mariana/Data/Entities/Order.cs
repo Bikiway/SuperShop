@@ -19,7 +19,7 @@ namespace SuperShop_Mariana.Data.Entities
 
         [Required]
         [Display(Name = "Delivery Date")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy hh:mm tt}", ApplyFormatInEditMode = false)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm tt}", ApplyFormatInEditMode = false)]
         public DateTime DeliveryDate { get; set; }
 
 
