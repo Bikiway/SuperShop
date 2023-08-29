@@ -10,8 +10,8 @@ using SuperShop_Mariana.Data;
 namespace SuperShop_Mariana.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230707174929_AddOrdersModels")]
-    partial class AddOrdersModels
+    [Migration("20230801161436_DeliveryDateAlteredAgain")]
+    partial class DeliveryDateAlteredAgain
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -159,7 +159,7 @@ namespace SuperShop_Mariana.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("DeliveryDate")
+                    b.Property<DateTime?>("DeliveryDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("OrderDate")

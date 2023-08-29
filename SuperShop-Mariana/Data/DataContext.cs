@@ -14,6 +14,10 @@ namespace SuperShop_Mariana.Data
 
         public DbSet<OrderDetailTmp> OrderDetailTemps { get; set; }
 
+        public DbSet<Country> Countries { get; set; }
+
+        public DbSet<City> Cities { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options) //injetamos o options
         {
 

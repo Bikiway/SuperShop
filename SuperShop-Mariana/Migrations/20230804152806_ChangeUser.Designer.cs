@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SuperShop_Mariana.Data;
 
 namespace SuperShop_Mariana.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230804152806_ChangeUser")]
+    partial class ChangeUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -494,13 +496,13 @@ namespace SuperShop_Mariana.Migrations
 
             modelBuilder.Entity("SuperShop_Mariana.Data.Entities.User", b =>
                 {
-                    b.HasOne("SuperShop_Mariana.Data.Entities.City", "City")
+                    b.HasOne("SuperShop_Mariana.Data.Entities.City", "city")
                         .WithMany()
                         .HasForeignKey("CityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("City");
+                    b.Navigation("city");
                 });
 
             modelBuilder.Entity("SuperShop_Mariana.Data.Entities.Country", b =>

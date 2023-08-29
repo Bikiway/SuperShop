@@ -4,11 +4,6 @@
       "ignored": "true",
       "type": "storage",
       "connectionId": "Blob:ConnectionString"
-    },
-    "mssql1": {
-      "ignored": "true",
-      "type": "mssql",
-      "connectionId": "ConnectionStrings:DefaultConnection"
     }
   }
 }

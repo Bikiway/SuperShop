@@ -2,7 +2,7 @@
 
 namespace SuperShop_Mariana.Migrations
 {
-    public partial class AlterOrder : Migration
+    public partial class UpdateUsers : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -15,5 +15,13 @@ namespace SuperShop_Mariana.Data
         Task AddItemToOrderAsync(AddItemViewModel model, string userName); //Add items
 
         Task ModifyOrderDetailsTempQuantityAsync(int Id, double quantity); //Modifica os items que lá estão.
+
+        Task DeleteTempAsync(int Id);
+
+        Task<bool> ConfirmOrderAsync(string userName);
+
+        Task DeliveryOder(DeliveryViewModel model);
+
+        Task<Order> GetOderAsync(int id); //Método que recebe o id e me dê uma encomenda através do id.
     }
 }

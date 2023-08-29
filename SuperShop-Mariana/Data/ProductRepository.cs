@@ -26,8 +26,7 @@ namespace SuperShop_Mariana.Data
             {
                 Text = p.Name,
                 Value = p.Id.ToString()
-            }
-            ).ToList();
+            }).ToList();
 
             list.Insert(0, new SelectListItem
             {

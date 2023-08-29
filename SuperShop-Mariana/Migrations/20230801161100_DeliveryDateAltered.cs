@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SuperShop_Mariana.Migrations
 {
-    public partial class AddOrdersModels : Migration
+    public partial class DeliveryDateAltered : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

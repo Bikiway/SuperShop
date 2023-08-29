@@ -10,8 +10,8 @@ using SuperShop_Mariana.Data;
 namespace SuperShop_Mariana.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230712190155_AlterOrder")]
-    partial class AlterOrder
+    [Migration("20230801161100_DeliveryDateAltered")]
+    partial class DeliveryDateAltered
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SuperShop_Mariana.Data.Entities;
 using SuperShop_Mariana.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,6 +33,22 @@ namespace SuperShop_Mariana.Data
             await _userHelper.CheckRoleAsync("Admin"); //Se existe esse role admin e customer.
             await _userHelper.CheckRoleAsync("Customer");
 
+            if(!_context.Countries.Any())
+            {
+                var cities = new List<City>();
+                cities.Add(new City { Name = "Porto" });
+                cities.Add(new City { Name = "Aveiro" });
+                cities.Add(new City { Name = "Lisboa" });
+
+                _context.Countries.Add(new Country
+                {
+                    Cities = cities,
+                    Name = "Portugal",
+                });
+
+                await _context.SaveChangesAsync();
+            }
+
             var user = await _userHelper.GetUserByEmailAsync("mariana.95@outlook.pt");
             if(user == null)
             {
@@ -42,6 +59,9 @@ namespace SuperShop_Mariana.Data
                     Email = "mariana.95@outlook.pt",
                     UserName = "mariana.95@outlook.pt",
                     PhoneNumber = "123456789",
+                    Address = "Rua Jau 233",
+                    CityId = _context.Countries.FirstOrDefault().Cities.FirstOrDefault().Id,
+                    City = _context.Countries.FirstOrDefault().Cities.FirstOrDefault(),
                 };
                 var result = await _userHelper.AddUserAsync(user, "1234567"); //Password sempre à parte para depois ser encriptada.
 

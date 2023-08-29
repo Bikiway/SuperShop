@@ -1,22 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using SuperShop_Mariana.Data;
 using SuperShop_Mariana.Data.Entities;
 using SuperShop_Mariana.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Azure;
-using Azure.Storage.Queues;
-using Azure.Storage.Blobs;
-using Azure.Core.Extensions;
+using System.Text;
 
 namespace SuperShop_Mariana
 {
@@ -32,12 +25,12 @@ namespace SuperShop_Mariana
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentity<User, IdentityRole>( cfg =>
+            services.AddIdentity<User, IdentityRole>(cfg =>
             {
                 cfg.User.RequireUniqueEmail = true; //Emails unicos
 
                 //Password sem caracteres especiais e etc
-                cfg.Password.RequireDigit = false; 
+                cfg.Password.RequireDigit = false;
                 cfg.Password.RequireUppercase = false;
                 cfg.Password.RequiredUniqueChars = 0;
                 cfg.Password.RequireLowercase = false;
@@ -45,9 +38,21 @@ namespace SuperShop_Mariana
                 cfg.Password.RequireNonAlphanumeric = false;
             })
                 .AddEntityFrameworkStores<DataContext>();
-            
 
-            services.AddDbContext<DataContext>(cfg =>  
+            services.AddAuthentication()
+                .AddCookie()
+                .AddJwtBearer(cfg => 
+                {
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = this.Configuration["Tokens:Issuer"],
+                        ValidAudience = this.Configuration["Tokens:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(this.Configuration["Tokens:Key"]))
+                    };
+                });
+
+            services.AddDbContext<DataContext>(cfg =>
             {
                 //Tipo de bases dados queremos instalar
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")); //Buscar a connection string
@@ -62,20 +67,21 @@ namespace SuperShop_Mariana
             services.AddScoped<IBlobHelper, BlobHelper>(); //Entra o blob e sai o Iimage.
 
             services.AddScoped<IConverterHelper, ConverterHelper>();
-            
+
             services.AddScoped<IProductsRepository, ProductRepository>(); //Class por herança. Class Abstrata
             //services.AddScoped<IRepository, Repository>(); 
 
             services.AddScoped<IOrderRepository, OrderRepository>();
 
-
-            services.AddControllersWithViews();
+            services.AddScoped<ICountryRepository, CountryRepository>();
 
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/NotAuthorized";
                 options.AccessDeniedPath = "/Account/NotAuthorized";
             });
+
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

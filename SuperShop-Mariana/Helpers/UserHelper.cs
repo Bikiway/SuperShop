@@ -73,5 +73,13 @@ namespace SuperShop_Mariana.Helpers
         {
             return await _userManager.IsInRoleAsync(user, roleName); 
         }
+
+        public async Task<SignInResult> ValidatePasswordAsync(User user, string password)
+        {
+            return await _signInManager.CheckPasswordSignInAsync(
+                user,
+                password,
+                false); //Não bloquear a x tentativas. Se colocar true, existem x tentativas.
+        }
     }
 }
